@@ -56,16 +56,25 @@ class PSR7Server implements Transport {
      * @return ResponseInterface
      */
     public function reply(string $data) {
-
         if ($this->responseFactory instanceof ResponseFactoryInterface) {
             $response = $this->responseFactory->createResponse(200);
         } else $response = $this->responseFactory->withStatus(200);
+        return $this->respond($response, $data);
+    }
 
-        $response->getBody()->write($data);
-        if ($this->cors) $response = $response->withAddedHeader('Access-Control-Allow-Origin', '*');
+    /**
+     * Adds Headers + json to response
+     * @param ResponseInterface $response
+     * @param string $json
+     * @return ResponseInterface
+     */
+    public function respond(ResponseInterface $response, string $json): ResponseInterface {
+        $response->getBody()->write($json);
+
+        if ($this->cors) $response = $response->withHeader('Access-Control-Allow-Origin', '*');
         return $response->withHeader('Content-Type', 'application/rpc+json')
-                        ->withAddedHeader('Cache-Control', 'private, max-age=0, no-cache')
-                        ->withAddedHeader('Content-Length', "" . strlen($data));
+                        ->withHeader('Cache-Control', 'private, max-age=0, no-cache')
+                        ->withHeader('Content-Length', "" . strlen($json));
     }
 
 }
