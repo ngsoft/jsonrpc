@@ -29,6 +29,7 @@ class JsonRPCMiddleware implements MiddlewareInterface {
      * @param string|object $rpchandler
      * @param ResponseFactoryInterface $responsefactory
      * @param string $pathname Respond to that pathname
+     * @param LoggerInterface|null $logger If you have a logger
      */
     public function __construct(
             $rpchandler,
