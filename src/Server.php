@@ -68,6 +68,7 @@ class Server {
             return $this->transport->reply($json);
         } catch (Throwable $e) {
             $this->logException($e);
+            //output a basic error response?
         }
     }
 
