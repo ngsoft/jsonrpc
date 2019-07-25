@@ -23,12 +23,12 @@ class JsonRPCMiddleware implements MiddlewareInterface {
      * Autodetects json requests on an assigned path
      * and respond to it with a declared handler
      *
-     * @param object $rpchandler
+     * @param string|object $rpchandler
      * @param ResponseFactoryInterface $responsefactory
      * @param string $pathname Respond to that pathname
      */
     public function __construct(
-            object $rpchandler,
+            $rpchandler,
             ResponseFactoryInterface $responsefactory,
             string $pathname = "/rpc.json"
     ) {

@@ -45,7 +45,13 @@ class Server {
      * @param Transport $transport
      */
     public function __construct($methodHandler, Transport $transport = null) {
-        $this->handler = $methodHandler;
+
+        assert(
+                is_object($methodHandler)
+                or ( is_string($methodHandler) and class_exists($methodHandler))
+        );
+
+        $this->handler = is_string($methodHandler) ? new $methodHandler() : $methodHandler;
         $this->transport = $transport ?: new BasicServer();
     }
 
