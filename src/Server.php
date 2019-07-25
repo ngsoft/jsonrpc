@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface,
 
 class Server {
 
+    /** @var object */
     protected $handler;
 
     /** @var Transport */
