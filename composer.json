@@ -1,6 +1,6 @@
 {
     "name": "ngsoft/jsonrpc",
-    "description": "JSON-RPC 2.0 server implementation",
+    "description": "JSON-RPC 2.0 server implementation (a fork of jsonrpc/jsonrpc)",
     "keywords": ["json", "rpc", "json-rpc", "api"],
     "homepage": "https://github.com/ngsoft/jsonrpc",
     "type": "library",
