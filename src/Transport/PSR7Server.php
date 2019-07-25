@@ -15,13 +15,18 @@ class PSR7Server implements Transport {
     /** @var ResponseFactoryInterface|ResponseInterface */
     protected $responseFactory;
 
+    /** @var bool */
+    protected $cors;
+
     /**
      * @param ServerRequestInterface $request
      * @param ResponseFactoryInterface|ResponseInterface $response
+     * @param bool $cors Enable all origins (CORS)
      */
     public function __construct(
             ServerRequestInterface $request,
-            $response
+            $response,
+            bool $cors = false
     ) {
         $this->request = $request;
         assert(
@@ -29,14 +34,16 @@ class PSR7Server implements Transport {
                 or $response instanceof ResponseInterface
         );
         $this->responseFactory = $response;
+        $this->cors = $cors;
     }
 
+    /** {@inheritdoc} */
     public function receive(): string {
 
         if (
                 preg_match('/json/', $this->request->getHeaderLine('Content-Type'))
                 and in_array($this->request->getMethod(), [
-                    'POST', 'PUT', 'DELETE', 'PATCH'
+                    'POST',
                 ])
         ) {
             return (string) $this->request->getBody();
@@ -55,9 +62,8 @@ class PSR7Server implements Transport {
         } else $response = $this->responseFactory->withStatus(200);
 
         $response->getBody()->write($data);
-
-        return $response->withHeader('Content-Type', 'application/json')
-                        //->withAddedHeader('Access-Control-Allow-Origin', '*')
+        if ($this->cors) $response = $response->withAddedHeader('Access-Control-Allow-Origin', '*');
+        return $response->withHeader('Content-Type', 'application/rpc+json')
                         ->withAddedHeader('Cache-Control', 'private, max-age=0, no-cache')
                         ->withAddedHeader('Content-Length', "" . strlen($data));
     }

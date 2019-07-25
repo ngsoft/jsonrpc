@@ -16,7 +16,7 @@ class BasicServer implements Transport {
 
         // header('Access-Control-Allow-Origin: *');
         header('Cache-Control: private, max-age=0, no-cache');
-        header('Content-Type: application/json');
+        header('Content-Type: application/rpc+json');
         header("Content-Length: " . strlen($data));
         print $data;
     }

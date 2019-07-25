@@ -24,6 +24,9 @@ class JsonRPCMiddleware implements MiddlewareInterface {
     /** @var LoggerInterface */
     private $logger;
 
+    /** @var bool */
+    private $cors;
+
     /**
      * Autodetects json requests on an assigned path
      * and respond to it with a declared handler
@@ -31,18 +34,21 @@ class JsonRPCMiddleware implements MiddlewareInterface {
      * @param string|object $rpchandler Class name or instance
      * @param ResponseFactoryInterface $responsefactory
      * @param string $pathname Respond to that pathname
+     * @param bool $cors Description
      * @param LoggerInterface|null $logger If you have a logger
      */
     public function __construct(
             $rpchandler,
             ResponseFactoryInterface $responsefactory,
             string $pathname = "/rpc.json",
+            bool $cors = false,
             LoggerInterface $logger = null
     ) {
         $this->responsefactory = $responsefactory;
         $this->handler = $rpchandler;
         $this->path = $pathname;
         $this->logger = $logger;
+        $this->cors = $cors;
     }
 
     /** {@inheritdoc} */
@@ -53,13 +59,13 @@ class JsonRPCMiddleware implements MiddlewareInterface {
 
         if (
                 $request->getUri()->getPath() === $this->path
-                and ( preg_match('/json/', $request->getHeaderLine('Content-Type'))
-                or preg_match('/json/', $request->getHeaderLine('Accept')))
+                and preg_match('/json/', $request->getHeaderLine('Content-Type'))
+                and preg_match('/json/', $request->getHeaderLine('Accept'))
                 and in_array($request->getMethod(), [
-                    'POST', 'PUT', 'DELETE', 'PATCH'
+                    'POST',
                 ])
         ) {
-            $transport = new PSR7Server($request, $this->responsefactory);
+            $transport = new PSR7Server($request, $this->responsefactory, $cors);
             $rpc = new Server($this->handler, $transport);
             if ($this->logger instanceof LoggerInterface) $rpc->setLogger($this->logger);
             $response = $rpc->receive();
