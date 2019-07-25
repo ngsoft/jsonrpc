@@ -6,7 +6,7 @@ namespace NGSOFT\JsonRPC;
 
 use Exception;
 use NGSOFT\JsonRPC\{
-    Base\Request, Base\Response, Base\Rpc, Interfaces\Transport, Transport\BasicServer
+    Base\Request, Base\Response, Base\Rpc, Exceptions\JsonRPCError, Interfaces\Transport, Transport\BasicServer
 };
 use Psr\Log\LoggerInterface,
     ReflectionClass,
@@ -177,7 +177,7 @@ class Server {
             $result = call_user_func_array($callback, $params);
         } catch (Throwable $e) {
             $this->logException($e);
-            if ($e instanceof Exceptions\JsonRPCError) {
+            if ($e instanceof JsonRPCError) {
                 $code = $e->getCode();
                 if ($code < 0) {
                     $this->error = $code;
