@@ -8,16 +8,19 @@ class BasicServer implements Transport {
 
     /** {@inheritdoc} */
     public function receive(): string {
-        $stream = fopen("php://input", "r");
-        fseek($stream, 0);
-        $json = stream_get_contents($stream);
-        fclose($stream);
-        return is_string($json) ? $json : "";
+        return @file_get_contents('php://input') ?: "";
     }
 
     /** {@inheritdoc} */
     public function reply(string $data) {
-        echo $data;
+
+        header('Access-Control-Allow-Origin: *');
+        header('Cache-Control: private, max-age=0, no-cache');
+        header('Content-Type: application/json');
+        header("Content-Length: " . strlen($data));
+
+
+        print $data;
     }
 
 }

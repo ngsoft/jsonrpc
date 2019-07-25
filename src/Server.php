@@ -52,13 +52,14 @@ class Server {
     /**
      * Handles the request
      * @param string $input
+     * @return mixed
      */
     public function receive(string $input = null) {
         $this->init();
         try {
             $input = $input ?: $this->transport->receive();
             $json = $this->process($input);
-            $this->transport->reply($json);
+            return $this->transport->reply($json);
         } catch (Throwable $e) {
             $this->logException($e);
         }

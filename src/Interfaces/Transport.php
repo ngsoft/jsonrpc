@@ -14,6 +14,7 @@ interface Transport {
 
     /**
      * Send the response
+     * Can return a value
      * @param string $data
      */
     public function reply(string $data);
