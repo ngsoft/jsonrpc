@@ -175,7 +175,7 @@ class Server {
 
         try {
             $result = call_user_func_array($callback, $params);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->logException($e);
             $this->error = Rpc::ERR_INTERNAL;
 
