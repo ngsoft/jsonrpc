@@ -59,7 +59,7 @@ class PSR7Server implements Transport {
         return $response->withHeader('Content-Type', 'application/json')
                         //->withAddedHeader('Access-Control-Allow-Origin', '*')
                         ->withAddedHeader('Cache-Control', 'private, max-age=0, no-cache')
-                        ->withAddedHeader('Content-Length', strlen($data));
+                        ->withAddedHeader('Content-Length', "" . strlen($data));
     }
 
 }

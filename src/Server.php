@@ -10,9 +10,16 @@ use NGSOFT\JsonRPC\{
 };
 use Psr\Log\LoggerInterface,
     ReflectionClass,
+    ReflectionProperty,
     Throwable;
 
 class Server {
+
+    /** @var array|null|int */
+    protected $error = null;
+
+    /** @var ReflectionProperty|null */
+    protected $handlerError = null;
 
     /** @var object */
     protected $handler;
@@ -32,13 +39,7 @@ class Server {
     /** @var array */
     protected $responses = array();
 
-    /** @var array|null */
-    protected $error;
-
-    /** @var string|null */
-    protected $handlerError;
-
-    /** @var ReflectionClass */
+    /** @var ReflectionClass|null */
     protected $refClass;
 
     /**
@@ -58,7 +59,7 @@ class Server {
 
     /**
      * Handles the request
-     * @param string $input
+     * @param string|null $input
      * @return mixed
      */
     public function receive(string $input = null) {
@@ -71,6 +72,7 @@ class Server {
             $this->logException($e);
             //output a basic error response?
         }
+        return null;
     }
 
     /**
@@ -113,9 +115,6 @@ class Server {
         return $batch && $data ? '[' . $data . ']' : $data;
     }
 
-    /**
-     * @param string|array $struct
-     */
     protected function getRequests($struct) {
 
         if (is_array($struct)) {
@@ -244,6 +243,7 @@ class Server {
             try {
                 $refMethod = $this->refClass->getMethod($method);
             } catch (Exception $e) {
+                $e->getCode();
                 # we know we are callable, so the class must be implementing __call or __callStatic
                 $params = $this->getParams($params);
                 return true;
@@ -330,7 +330,7 @@ class Server {
         }
     }
 
-    protected function logException(Exception $e) {
+    protected function logException(Throwable $e) {
         $message = 'Exception: ' . $e->getMessage();
         $message .= ' in ' . $e->getFile() . ' on line ' . $e->getLine();
         $this->logError($message);

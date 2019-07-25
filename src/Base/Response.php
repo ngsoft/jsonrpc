@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NGSOFT\JsonRPC\Base;
 
 class Response extends Rpc {
@@ -25,7 +27,7 @@ class Response extends Rpc {
     }
 
     public function toJson() {
-
+        $ar = [];
         $ar['jsonrpc'] = $this->jsonrpc;
 
         if ($this->error) {
@@ -41,8 +43,8 @@ class Response extends Rpc {
 
     protected function init($struct, $new) {
 
-        $req = 0;
 
+        $req = 0;
         try {
 
             #jsonrpc
@@ -58,7 +60,7 @@ class Response extends Rpc {
                 ++$req;
             }
 
-            if ($req !== 1) {
+            if ($req != 1) {
                 $this->fault = $this->getErrorMsg('');
                 return;
             }

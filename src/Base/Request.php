@@ -23,7 +23,7 @@ class Request extends Rpc {
     }
 
     public function toJson() {
-
+        $ar = [];
         $ar['jsonrpc'] = $this->jsonrpc;
         $ar['method'] = $this->method;
 

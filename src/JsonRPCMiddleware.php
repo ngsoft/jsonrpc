@@ -60,12 +60,13 @@ class JsonRPCMiddleware implements MiddlewareInterface {
         ) {
             $transport = new PSR7Server($request, $this->responsefactory);
             $rpc = new Server($this->handler, $transport);
-            if ($this->logger instanceof LoggerInterface) $rpc->setLogger($logger);
+            if ($this->logger instanceof LoggerInterface) $rpc->setLogger($this->logger);
             $response = $rpc->receive();
             if ($response instanceof ResponseInterface) return $response;
+            else return $this->responsefactory->createResponse(400); //an exception has been thrown and logged so invalid request
         }
 
-        //not a jsonrpc request or an error occured
+        //not a jsonrpc request
         return $handler->handle($request);
     }
 
