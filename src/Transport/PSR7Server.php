@@ -16,7 +16,6 @@ class PSR7Server implements Transport {
     protected $responseFactory;
 
     /**
-     *
      * @param ServerRequestInterface $request
      * @param ResponseFactoryInterface|ResponseInterface $response
      */

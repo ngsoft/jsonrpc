@@ -88,11 +88,6 @@ class Server {
         $this->assoc = true;
     }
 
-    /**
-     * Process the request
-     * @param string $json
-     * @return string
-     */
     protected function process(string $json): string {
 
         if (!$struct = Rpc::decode($json, $batch)) {
