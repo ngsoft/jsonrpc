@@ -53,7 +53,8 @@ class JsonRPCMiddleware implements MiddlewareInterface {
 
         if (
                 $request->getUri()->getPath() === $this->path
-                and preg_match('/json/', $request->getHeaderLine('Content-Type'))
+                and ( preg_match('/json/', $request->getHeaderLine('Content-Type'))
+                or preg_match('/json/', $request->getHeaderLine('Accept')))
                 and in_array($request->getMethod(), [
                     'POST', 'PUT', 'DELETE', 'PATCH'
                 ])
