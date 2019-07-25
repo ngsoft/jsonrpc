@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NGSOFT\JsonRPC\Transport;
+namespace NGSOFT\JsonRPC\Interfaces;
 
 interface Transport {
 

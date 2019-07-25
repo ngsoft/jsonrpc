@@ -20,8 +20,6 @@ class Server {
 
     public function __construct($methodHandler, $transport = null) {
 
-        ini_set('display_errors', '0');
-
         $this->handler = $methodHandler;
         $this->transport = $transport;
 
@@ -33,14 +31,12 @@ class Server {
     public function receive($input = '') {
 
         $this->init();
-
         try {
             $input = $input ?: $this->transport->receive();
             $json = $this->process($input);
             $this->transport->reply($json);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->logException($e);
-            exit;
         }
     }
 
@@ -311,7 +307,9 @@ class Server {
                 error_log($message);
             }
         } catch (\Exception $e) {
-            error_log($e->__toString());
+
+
+            //error_log($e->__toString());
         }
     }
 
