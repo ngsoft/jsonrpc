@@ -2,15 +2,14 @@
 
 namespace NGSOFT\JsonRPC\Transport;
 
-class BasicServer {
+class BasicServer implements Transport {
 
-    public function receive() {
+    public function receive(): string {
         return @file_get_contents('php://input');
     }
 
-    public function reply($data) {
+    public function reply(string $data) {
         echo $data;
-        exit;
     }
 
 }
