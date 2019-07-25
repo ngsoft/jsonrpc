@@ -57,9 +57,9 @@ class PSR7Server implements Transport {
 
         $response->getBody()->write($data);
 
-        return $response->withHeader('Access-Control-Allow-Origin', '*')
+        return $response->withHeader('Content-Type', 'application/json')
+                        //->withAddedHeader('Access-Control-Allow-Origin', '*')
                         ->withAddedHeader('Cache-Control', 'private, max-age=0, no-cache')
-                        ->withAddedHeader('Content-Type', 'application/json')
                         ->withAddedHeader('Content-Length', strlen($data));
     }
 

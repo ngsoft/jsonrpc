@@ -14,12 +14,10 @@ class BasicServer implements Transport {
     /** {@inheritdoc} */
     public function reply(string $data) {
 
-        header('Access-Control-Allow-Origin: *');
+        // header('Access-Control-Allow-Origin: *');
         header('Cache-Control: private, max-age=0, no-cache');
         header('Content-Type: application/json');
         header("Content-Length: " . strlen($data));
-
-
         print $data;
     }
 
