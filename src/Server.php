@@ -42,7 +42,7 @@ class Server {
 
     /**
      * @param string|object $methodHandler
-     * @param Transport $transport
+     * @param Transport|null $transport
      */
     public function __construct($methodHandler, Transport $transport = null) {
 
