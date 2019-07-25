@@ -1,58 +1,98 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NGSOFT\JsonRPC;
 
-use NGSOFT\JsonRPC\Base\Rpc;
-use NGSOFT\JsonRPC\Base\Request;
-use NGSOFT\JsonRPC\Base\Response;
+use Exception;
+use NGSOFT\JsonRPC\{
+    Base\Request, Base\Response, Base\Rpc, Interfaces\Transport, Transport\BasicServer
+};
+use Psr\Log\LoggerInterface,
+    ReflectionClass,
+    Throwable;
 
 class Server {
 
-    private $handler;
-    private $transport = null;
-    private $logger = null;
-    private $assoc = false;
-    private $requests = array();
-    private $responses = array();
-    private $error = null;
-    private $handlerError = null;
-    private $refClass = null;
+    protected $handler;
 
-    public function __construct($methodHandler, $transport = null) {
+    /** @var Transport */
+    protected $transport;
 
+    /** @var LoggerInterface|null */
+    protected $logger;
+
+    /** @var bool */
+    protected $assoc = false;
+
+    /** @var array */
+    protected $requests = array();
+
+    /** @var array */
+    protected $responses = array();
+
+    /** @var array|null */
+    protected $error;
+
+    /** @var string|null */
+    protected $handlerError;
+
+    /** @var ReflectionClass */
+    protected $refClass;
+
+    /**
+     * @param string|object $methodHandler
+     * @param Transport $transport
+     */
+    public function __construct($methodHandler, Transport $transport = null) {
         $this->handler = $methodHandler;
-        $this->transport = $transport;
-
-        if (!$this->transport) {
-            $this->transport = new Transport\BasicServer();
-        }
+        $this->transport = $transport ?: new BasicServer();
     }
 
-    public function receive($input = '') {
-
+    /**
+     * Handles the request
+     * @param string $input
+     */
+    public function receive(string $input = null) {
         $this->init();
         try {
             $input = $input ?: $this->transport->receive();
             $json = $this->process($input);
             $this->transport->reply($json);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logException($e);
         }
     }
 
-    public function setTransport($transport) {
+    /**
+     * Set the Transport Class
+     * @param Transport $transport
+     */
+    public function setTransport(Transport $transport) {
         $this->transport = $transport;
     }
 
-    public function setLogger($logger) {
+    /**
+     * Set the Logger
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger) {
         $this->logger = $logger;
     }
 
+    /**
+     * Use Assoc
+     */
     public function setObjectsAsArrays() {
         $this->assoc = true;
     }
 
-    private function process($json) {
+    /**
+     * Process the request
+     * @param string $json
+     * @return string
+     */
+    protected function process(string $json): string {
 
         if (!$struct = Rpc::decode($json, $batch)) {
             $code = is_null($struct) ? Rpc::ERR_PARSE : Rpc::ERR_REQUEST;
@@ -69,7 +109,10 @@ class Server {
         return $batch && $data ? '[' . $data . ']' : $data;
     }
 
-    private function getRequests($struct) {
+    /**
+     * @param string|array $struct
+     */
+    protected function getRequests($struct) {
 
         if (is_array($struct)) {
 
@@ -81,7 +124,7 @@ class Server {
         }
     }
 
-    private function processRequests() {
+    protected function processRequests() {
 
         foreach ($this->requests as $request) {
 
@@ -107,7 +150,7 @@ class Server {
         }
     }
 
-    private function processRequest($method, $params) {
+    protected function processRequest($method, $params) {
 
         $this->error = null;
 
@@ -129,7 +172,7 @@ class Server {
 
         try {
             $result = call_user_func_array($callback, $params);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logException($e);
             $this->error = Rpc::ERR_INTERNAL;
 
@@ -143,7 +186,7 @@ class Server {
         return $result;
     }
 
-    private function addResponse($request, $result) {
+    protected function addResponse($request, $result) {
 
         $ar = array(
             'id' => $request->id
@@ -165,7 +208,7 @@ class Server {
         $this->responses[] = $response->toJson();
     }
 
-    private function getCallback($method) {
+    protected function getCallback($method) {
 
         $callback = array($this->handler, $method);
 
@@ -174,13 +217,13 @@ class Server {
         }
     }
 
-    private function checkMethod($method, &$params) {
+    protected function checkMethod($method, &$params) {
 
         try {
 
             if (!$this->refClass) {
                 # we have already checked that handler is callable
-                $this->refClass = new \ReflectionClass($this->handler);
+                $this->refClass = new ReflectionClass($this->handler);
 
                 try {
 
@@ -189,14 +232,14 @@ class Server {
                     if ($prop->isPublic()) {
                         $this->handlerError = $prop;
                     }
-                } catch (\Exception $e) {
-
+                } catch (Exception $e) {
+                    $e->getCode();
                 }
             }
 
             try {
                 $refMethod = $this->refClass->getMethod($method);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 # we know we are callable, so the class must be implementing __call or __callStatic
                 $params = $this->getParams($params);
                 return true;
@@ -233,12 +276,12 @@ class Server {
             }
 
             return $res;
-        } catch (\Exception $e) {
-
+        } catch (Exception $e) {
+            $e->getCode();
         }
     }
 
-    private function getParams($params) {
+    protected function getParams($params) {
 
         if (is_object($params)) {
             $params = array_values((array) $params);
@@ -249,7 +292,7 @@ class Server {
         return $params;
     }
 
-    private function castObjectsToArrays(&$params) {
+    protected function castObjectsToArrays(&$params) {
 
         foreach ($params as &$param) {
 
@@ -259,7 +302,7 @@ class Server {
         }
     }
 
-    private function getHandlerError() {
+    protected function getHandlerError() {
 
         if ($this->handlerError) {
 
@@ -271,7 +314,7 @@ class Server {
         }
     }
 
-    private function clearHandlerError() {
+    protected function clearHandlerError() {
 
         if ($this->handlerError) {
 
@@ -283,37 +326,18 @@ class Server {
         }
     }
 
-    private function logException(\Exception $e) {
+    protected function logException(Exception $e) {
         $message = 'Exception: ' . $e->getMessage();
         $message .= ' in ' . $e->getFile() . ' on line ' . $e->getLine();
         $this->logError($message);
     }
 
-    private function logError($message) {
-
-        try {
-
-            if ($this->logger) {
-
-                $callback = array($this->logger, 'addRecord');
-
-                $params = array(
-                    500,
-                    $message
-                );
-
-                $result = call_user_func_array($callback, $params);
-            } else {
-                error_log($message);
-            }
-        } catch (\Exception $e) {
-
-
-            //error_log($e->__toString());
-        }
+    protected function logError(string $message) {
+        if ($this->logger) $this->logger->error($message);
+        else error_log($message);
     }
 
-    private function init() {
+    protected function init() {
         $this->requests = array();
         $this->responses = array();
         $this->error = null;
