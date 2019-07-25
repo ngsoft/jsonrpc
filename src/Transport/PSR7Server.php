@@ -42,6 +42,7 @@ class PSR7Server implements Transport {
 
         if (
                 preg_match('/json/', $this->request->getHeaderLine('Content-Type'))
+                and preg_match('/json/', $this->request->getHeaderLine('Accept'))
                 and in_array($this->request->getMethod(), [
                     'POST',
                 ])
