@@ -21,7 +21,8 @@
     "require-dev": {
         "psr/log": "*",
         "psr/http-message": "*",
-        "psr/http-factory": "^1.0"
+        "psr/http-factory": "*",
+        "psr/http-server-middleware": "*"
     },
 
     "require": {
