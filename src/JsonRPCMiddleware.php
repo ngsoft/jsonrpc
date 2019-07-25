@@ -65,7 +65,7 @@ class JsonRPCMiddleware implements MiddlewareInterface {
                     'POST',
                 ])
         ) {
-            $transport = new PSR7Server($request, $this->responsefactory, $cors);
+            $transport = new PSR7Server($request, $this->responsefactory, $this->cors);
             $rpc = new Server($this->handler, $transport);
             if ($this->logger instanceof LoggerInterface) $rpc->setLogger($this->logger);
             $response = $rpc->receive();
