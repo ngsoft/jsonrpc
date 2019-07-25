@@ -12,9 +12,16 @@ class JsonRPCError extends \RuntimeException {
     const ERR_SERVER = -32000;
 
     public function __construct(
-            int $statusCode = self::ERR_INTERNAL
+            int $statusCode = self::ERR_INTERNAL,
+            string $method = null,
+            string $param = null
     ) {
-        parent::__construct("", $statusCode);
+
+        $message = "";
+        if ($method !== null) $message .= "An error occured with method $method ";
+        if ($param !== null) $message .= " Invalid param $param";
+
+        parent::__construct($message, $statusCode);
     }
 
 }
