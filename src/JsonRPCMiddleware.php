@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NGSOFT\JsonRPC;
 
 use NGSOFT\JsonRPC\Transport\PSR7Server;
@@ -13,7 +15,7 @@ class JsonRPCMiddleware implements MiddlewareInterface {
     /** @var ResponseFactoryInterface */
     private $responsefactory;
 
-    /** @var object */
+    /** @var string|object */
     private $handler;
 
     /** @var string */
@@ -26,7 +28,7 @@ class JsonRPCMiddleware implements MiddlewareInterface {
      * Autodetects json requests on an assigned path
      * and respond to it with a declared handler
      *
-     * @param string|object $rpchandler
+     * @param string|object $rpchandler Class name or instance
      * @param ResponseFactoryInterface $responsefactory
      * @param string $pathname Respond to that pathname
      * @param LoggerInterface|null $logger If you have a logger
