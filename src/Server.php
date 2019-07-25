@@ -41,7 +41,7 @@ class Server {
     protected $refClass;
 
     /**
-     * @param string|object $methodHandler
+     * @param string|object $methodHandler class name or instance
      * @param Transport|null $transport
      */
     public function __construct($methodHandler, Transport $transport = null) {
