@@ -70,6 +70,8 @@ class PSR7Server implements Transport {
      * @return ResponseInterface
      */
     public function respond(ResponseInterface $response, string $json): ResponseInterface {
+        //notification
+        if (empty($json)) $response = $response->withStatus(204);
         $response->getBody()->write($json);
 
         if ($this->cors) $response = $response->withHeader('Access-Control-Allow-Origin', '*');
