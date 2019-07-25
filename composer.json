@@ -28,7 +28,7 @@
 
     "autoload": {
         "psr-4": {
-            "NGSOFT\\JsonRPC": "src/"
+            "NGSOFT\\JsonRPC\\": "src/"
         }
     }
 
