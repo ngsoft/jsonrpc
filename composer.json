@@ -19,7 +19,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
-
+        "psr/log": "*",
+        "psr/http-message": "*",
+        "psr/http-factory": "^1.0"
     },
 
     "require": {
