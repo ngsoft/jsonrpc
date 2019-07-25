@@ -39,7 +39,7 @@ class Response extends Rpc {
         return json_encode($ar);
     }
 
-    private function init($struct, $new) {
+    protected function init($struct, $new) {
 
         $req = 0;
 
@@ -71,7 +71,7 @@ class Response extends Rpc {
         }
     }
 
-    private function makeError($code) {
+    protected function makeError($code) {
 
         switch ($code) {
 
@@ -107,7 +107,7 @@ class Response extends Rpc {
         );
     }
 
-    private function getServerError($error) {
+    protected function getServerError($error) {
 
         if (is_int($error)) {
             $value = $this->makeError($error);
@@ -141,7 +141,6 @@ class Response extends Rpc {
                 }
             }
         }
-
         return $this->check('error', $value, true);
     }
 
