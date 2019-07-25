@@ -24,7 +24,9 @@
         "psr/http-factory": "*",
         "psr/http-server-middleware": "*"
     },
-
+    "provides": {
+        "psr/http-server-middleware-implementation": "1.0"
+    },
     "require": {
         "php": ">=7.1"
     },
