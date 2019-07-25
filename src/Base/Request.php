@@ -8,6 +8,9 @@ class Request extends Rpc {
     protected $params = null;
     protected $notification = false;
 
+    /**
+     * @param array|object $struct
+     */
     public function __construct($struct) {
 
         $ok = is_array($struct) || is_object($struct);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace NGSOFT\JsonRPC\Base;
 
 class Rpc {
@@ -18,7 +20,7 @@ class Rpc {
     const MODE_GET = 1;
     const MODE_EXISTS = 2;
 
-    public static function decode($message, &$batch) {
+    public static function decode(string $message, &$batch) {
 
         $struct = @json_decode($message, false);
         $batch = is_array($struct);
@@ -80,12 +82,8 @@ class Rpc {
                     break;
             }
         }
-
-        if (!$res) {
-            throw new \Exception($this->getErrorMsg($name, $exists));
-        } else {
-            return $value;
-        }
+        if ($res === false) throw new \Exception($this->getErrorMsg($name, $exists));
+        return $value;
     }
 
     protected function get($container, $key, $mode = 0) {
@@ -135,20 +133,13 @@ class Rpc {
     }
 
     private function checkId($id) {
-
-        if ((is_string($id) && $id) || is_int($id)) {
-            return true;
-        } elseif (!is_null($id)) {
-            return false;
-        }
-
+        if (is_numeric($id)) return true;
+        elseif (!is_null($id)) return false;
         $allowNull = false;
-
         if (isset($this->error)) {
             $code = $this->get($this->error, 'code', static::MODE_GET);
             $allowNull = $code === static::ERR_PARSE || $code === static::ERR_REQUEST;
         }
-
         return $allowNull;
     }
 
