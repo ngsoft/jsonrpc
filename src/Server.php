@@ -177,8 +177,14 @@ class Server {
             $result = call_user_func_array($callback, $params);
         } catch (Throwable $e) {
             $this->logException($e);
+            if ($e instanceof Exceptions\JsonRPCError) {
+                $code = $e->getCode();
+                if ($code < 0) {
+                    $this->error = $code;
+                    return;
+                }
+            }
             $this->error = Rpc::ERR_INTERNAL;
-
             return;
         }
 
