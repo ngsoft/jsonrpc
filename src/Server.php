@@ -181,7 +181,7 @@ class Server {
                 $code = $e->getCode();
                 if ($code !== 0) {
                     $this->error = [
-                        "code" => $e->getCode(),
+                        "code" => $code,
                         "message" => $e->getMessage()
                     ];
                     return;
