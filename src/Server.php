@@ -179,8 +179,11 @@ class Server {
             $this->logException($e);
             if ($e instanceof JsonRPCError) {
                 $code = $e->getCode();
-                if ($code < 0) {
-                    $this->error = $code;
+                if ($code !== 0) {
+                    $this->error = [
+                        "code" => $e->getCode(),
+                        "message" => $e->getMessage()
+                    ];
                     return;
                 }
             }

@@ -10,17 +10,31 @@ class JsonRPCError extends \RuntimeException {
     const ERR_PARAMS = -32602;
     const ERR_INTERNAL = -32603;
     const ERR_SERVER = -32000;
+    const ERR_APPLICATION = -32500;
+    const ERR_TRANSPORT = -32300;
 
+    private static $messages = [
+        self::ERR_PARSE => "Parse error",
+        self::ERR_REQUEST => "Invalid Request",
+        self::ERR_METHOD => "Method not found",
+        self::ERR_PARAMS => "Invalid params",
+        self::ERR_INTERNAL => "Internal error",
+        self::ERR_SERVER => "Server error",
+        self::ERR_APPLICATION => "Application error",
+        self::ERR_TRANSPORT => "Transport error"
+    ];
+
+    /**
+     *
+     * @param int $statusCode JsonRPC Status code
+     * @param string $message
+     * @param type $data
+     */
     public function __construct(
             int $statusCode = self::ERR_INTERNAL,
-            string $method = null,
-            string $param = null
+            string $message = ""
     ) {
-
-        $message = "";
-        if ($method !== null) $message .= "An error occured with method $method ";
-        if ($param !== null) $message .= " Invalid param $param";
-
+        if (empty($message) and isset(self::$messages[$statusCode])) $message = self::$messages[$statusCode];
         parent::__construct($message, $statusCode);
     }
 
