@@ -147,6 +147,7 @@ class Server {
             $method = preg_replace('/[\-\.]/', '_', $request->method);
 
             $result = $this->processRequest($method, $request->params);
+
             if (!$request->notification) {
                 $this->addResponse($request, $result);
             }
