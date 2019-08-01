@@ -72,7 +72,7 @@ class Server {
             $this->logException($e);
             //output a basic error response?
         }
-        return null;
+        return;
     }
 
     /**
