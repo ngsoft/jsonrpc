@@ -155,7 +155,10 @@ class Server {
 
     protected function processRequest($method, $params) {
 
+
         $this->error = null;
+
+        $method = is_string($method) ? preg_replace('/[\-\.]/', '_', $method) : $method;
 
         if (!$callback = $this->getCallback($method)) {
             $this->error = Rpc::ERR_METHOD;
@@ -248,6 +251,7 @@ class Server {
                     $e->getCode();
                 }
             }
+
 
             try {
                 $refMethod = $this->refClass->getMethod($method);
