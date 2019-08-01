@@ -158,7 +158,7 @@ class Server {
 
         $this->error = null;
 
-        $method = is_string($method) ? preg_replace('/[\-\.]/', '_', $method) : $method;
+        $method = preg_replace('/[\-\.]/', '_', $method);
 
         if (!$callback = $this->getCallback($method)) {
             $this->error = Rpc::ERR_METHOD;
