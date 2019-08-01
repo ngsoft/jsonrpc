@@ -144,9 +144,9 @@ class Server {
 
                 continue;
             }
+            $method = preg_replace('/[\-\.]/', '_', $request->method);
 
-            $result = $this->processRequest($request->method, $request->params);
-
+            $result = $this->processRequest($method, $request->params);
             if (!$request->notification) {
                 $this->addResponse($request, $result);
             }
@@ -157,8 +157,6 @@ class Server {
 
 
         $this->error = null;
-
-        $method = preg_replace('/[\-\.]/', '_', $method);
 
         if (!$callback = $this->getCallback($method)) {
             $this->error = Rpc::ERR_METHOD;
